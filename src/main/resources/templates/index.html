@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>TODO Application</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container">
+		<h1>📝 My TODO List</h1>
+
+		<!-- Add TODO Form -->
+		<form class="todo-form" th:action="@{/add}" method="post">
+			<input type="text" name="title" placeholder="What needs to be done?" required>
+			<button type="submit">Add TODO</button>
+		</form>
+
+		<!-- TODO List -->
+		<div th:if="${todos.size() > 0}">
+			<ul class="todo-list">
+				<li th:each="todo : ${todos}" th:classappend="${todo.completed} ? 'completed'" class="todo-item">
+					<form th:action="@{/toggle/{id}(id=${todo.id})}" method="post" style="display: inline;">
+						<input type="checkbox" class="todo-checkbox" th:checked="${todo.completed}" onchange="this.form.submit()">
+					</form>
+					<div class="todo-content">
+						<div class="todo-title" th:text="${todo.title}"></div>
+						<div class="todo-description" th:if="${todo.description}" th:text="${todo.description}"></div>
+					</div>
+					<div class="todo-actions">
+						<a th:href="@{/edit/{id}(id=${todo.id})}" class="btn btn-edit">Edit</a>
+						<form th:action="@{/delete/{id}(id=${todo.id})}" method="post" style="display: inline;">
+							<button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+						</form>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Empty State -->
+		<div th:if="${todos.size() == 0}" class="empty-state">
+			<p>✨ No TODOs yet!</p>
+			<p>Create one to get started.</p>
+		</div>
+	</div>
+</body>
+</html>
